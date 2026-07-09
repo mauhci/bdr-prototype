@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BDR x DFKI — Lab</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    height:100vh;display:flex;flex-direction:column;overflow:hidden;color:#0a0a0a}
+  /* harness chrome — experiments render below this bar */
+  #lab-bar{flex-shrink:0;display:flex;align-items:center;gap:14px;padding:8px 18px;background:#111;color:#fff;font-size:13px}
+  #lab-bar .tag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;
+    background:#5b21b6;padding:3px 8px;border-radius:4px}
+  #lab-bar .title{font-weight:600;flex:1}
+  #lab-bar select,#lab-bar button{font:inherit;font-size:12px;border-radius:6px;border:1px solid #444;
+    background:#1c1c1c;color:#fff;padding:5px 12px;cursor:pointer}
+  #lab-bar button:hover,#lab-bar select:hover{background:#2a2a2a}
+  #lab-root{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column}
+</style>
+</head>
+<body>
+  <div id="lab-bar">
+    <span class="tag">Lab</span>
+    <span class="title" id="lab-title">Experiment</span>
+    <select id="lab-exp" title="Switch experiment">
+      <option value="01">01 — HINT</option>
+      <option value="02">02 — MAGNET</option>
+      <option value="03">03 — RADIAL</option>
+      <option value="04">04 — HEATMAP</option>
+      <option value="05">05 — HANDOFF</option>
+    </select>
+    <button id="lab-restart" type="button">Restart</button>
+  </div>
+  <div id="lab-root"></div>
+
+<script>
+  /* Minimal harness shared by every experiment.
+     An experiment file (lab_NN.js) renders into LAB.root and registers a
+     rebuild function with LAB.onRestart(fn). Nothing here depends on the
+     study code base. */
+  window.LAB = {
+    root: document.getElementById("lab-root"),
+    _restart: null,
+    onRestart: function (fn) { this._restart = fn; },
+    restart: function () { this.root.innerHTML = ""; if (this._restart) this._restart(); },
+    setTitle: function (t) { document.getElementById("lab-title").textContent = t; },
+    log: function () { console.debug.apply(console, ["[lab]"].concat([].slice.call(arguments))); },
+  };
+
+  var params = new URLSearchParams(location.search);
+  var exp = params.get("exp") || "01";
+  var sel = document.getElementById("lab-exp");
+  sel.value = exp;
+  sel.addEventListener("change", function () { params.set("exp", sel.value); location.search = params.toString(); });
+  document.getElementById("lab-restart").addEventListener("click", function () { LAB.restart(); });
+
+  var s = document.createElement("script");
+  s.src = "lab_" + exp + ".js";
+  s.onerror = function () {
+    LAB.root.innerHTML =
+      '<div style="margin:auto;color:#888;font-size:14px">No experiment file <code>lab_' + exp + '.js</code> yet.</div>';
+  };
+  document.body.appendChild(s);
+</script>
+</body>
+</html>
