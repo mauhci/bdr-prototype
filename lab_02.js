@@ -20,15 +20,15 @@
   /* ── tunable design parameters ── */
   var CFG = {
     seededErrors: false,    // AI suggests a deliberately imperfect order
-    magnetRadius: 360,     // px tile-right-edge → slot-right-edge (responsive; recomputed in computeRadius)
-    magnetStrength: 0.72,  // 0–1 displacement of the tile toward the magnet (peak < 1 → overridable)
+    magnetRadius: 90,     // px tile-right-edge → slot-right-edge (responsive; recomputed in computeRadius)
+    magnetStrength: 0.58,  // 0–1 displacement of the tile toward the magnet (peak < 1 → overridable)
     springK: 0.22,         // spring stiffness (0–1): how hard it chases the target
     damping: 0.62,         // velocity damping per frame (0–1): the "weight" / overshoot
     snap: false,           // hard-snap to the slot centre when very close
     snapThreshold: 0.55,   // fraction of radius at which snap kicks in
     dragThreshold: 5,
     // responsive radius: magnetRadius = radiusBase × (viewport height / radiusRefH), clamped.
-    radiusBase: 360,       // px at the reference viewport height
+    radiusBase: 90,       // px at the reference viewport height
     radiusRefH: 900,       // reference viewport height (≈ a typical laptop browser)
     radiusMin: 160,
     radiusMax: 560,
